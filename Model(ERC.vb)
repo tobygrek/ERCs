@@ -1,0 +1,23 @@
+Imports System
+Imports System.Collections.Generic
+Imports System.ComponentModel
+
+Partial Public Class ERC
+    Public Property IDAccounting As Integer
+    
+    Public Property Name As String
+  
+    Public Property BIN As String
+    
+    Public Property ValueTariff As Nullable(Of Decimal)
+    
+    Public Property Code As String
+    
+    Public Property NumberContract As String
+    
+    Public Property DateContract As String
+    
+    Public Property NamePrint As String
+
+
+End Class
