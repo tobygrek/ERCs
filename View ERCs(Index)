@@ -1,0 +1,30 @@
+@ModelType IEnumerable(Of Ercs.ERC)
+@Code
+    ViewData("Title") = "Администратор"
+    Layout = "~/Views/Shared/_Layout.vbhtml"
+End Code
+
+<p><h2>ERC</h2></p>
+
+<form asp-controller="ERCs" asp-action="Index">
+    <p>
+        <input type="text" name="Search">
+        <input type="submit" value="Поиск" />
+
+    </p>
+
+</form>
+<div style ="height :600px; width :200px;overflow :auto ; color:black;">
+    <ul class="nav flex-column">
+        @For Each item In Model
+            @<li class="nav-item">
+                <h5 style="color:black;">@Html.ActionLink(item.Name, "KSK", New With {Key .id = item.Code})</h5>
+            </li>
+        Next
+
+    </ul>
+    </div>
+<div>
+    @Html.Partial("KSK", New List(Of vwConsumer))
+    @Html.Partial("KSK2", New List(Of NewClass))
+</div>
