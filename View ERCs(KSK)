@@ -1,0 +1,45 @@
+@ModelType IEnumerable(Of Ercs.vwConsumer)
+@Code
+    ViewData("Title") = "Информация по КСК"
+    Layout = "~/Views/Shared/_Layout.vbhtml"
+    Dim TableHeaders As String() = New String() {"Улица", "Счёт", "Дом", "Параметр", "Тариф"}
+End Code
+
+
+
+
+<h2> Информация по КСК</h2>
+
+
+<div Class="table" style=" height :400px; width :600px;overflow :auto ;">
+    <Table class="table ">
+
+        <thead>
+            <tr>
+                @For Each head In TableHeaders
+                    @<th>
+                        @head
+
+                    </th>
+                Next
+
+            </tr>
+        </thead>
+
+        <tbody>
+            @If Model IsNot Nothing Then
+                @For Each vwConsumer In Model
+                    @<tr>
+                        <td>@vwConsumer.NameStreet </td>
+                        <td>@vwConsumer.CountLS </td>
+                        <td>@vwConsumer.FullHouse </td>
+                        <td>@vwConsumer.Value </td>
+                        <td>@vwConsumer.ValueTariff </td>
+                    </tr>
+                Next
+            End If
+        </tbody>
+    </Table>
+</div>
+
+
