@@ -1,0 +1,7 @@
+Public Class NewClass
+
+
+
+    Public Property NameStreet As String
+    Public Property Name As String
+End Class
