@@ -1,0 +1,12 @@
+Public Class vwConsumer
+
+    Public Property NameStreet As String
+
+    Public Property CountLS As String
+
+    Public Property ValueTariff As String
+
+    Public Property FullHouse As String
+
+    Public Property Value As String
+End Class
