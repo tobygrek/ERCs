@@ -1,0 +1,41 @@
+@ModelType IEnumerable(Of Ercs.NewClass)
+@Code
+    ViewData("Title") = "Информация по КСК"
+    Layout = "~/Views/Shared/_Layout.vbhtml"
+    Dim TableHeaders As String() = New String() {"Название", "Улица"}
+End Code
+
+<h2>Информация по КСК</h2>
+
+
+<div class="table" style=" height :400px; width :600px;overflow :auto ;">
+    <Table class="table ">
+
+        <thead>
+            <tr>
+                @For Each head In TableHeaders
+                    @<th>
+                        @head
+
+                    </th>
+                Next
+
+            </tr>
+        </thead>
+
+        <tbody>
+            @If Model IsNot Nothing Then
+                @For Each NewClass In Model
+                    @<tr>
+
+
+                        <td> @NewClass.Name </td>
+                        <td>@NewClass.NameStreet </td>
+                    </tr>
+                Next
+            End If
+        </tbody>
+    </Table>
+</div>
+
+
