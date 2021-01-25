@@ -1,0 +1,5 @@
+Public Class ViewModel
+    Public Property ERC As IEnumerable(Of ERC)
+    Public Property vwConsumer As IEnumerable(Of vwConsumer)
+    Public Property NewClass As IEnumerable(Of NewClass)
+End Class
