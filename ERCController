@@ -1,66 +1,75 @@
-Imports System
-Imports System.Collections.Generic
-Imports System.Data
-Imports System.Data.Entity
 Imports System.Data.SqlClient
-Imports System.Dynamic
-Imports System.Linq
-Imports System.Net
-Imports System.Web
 Imports System.Web.Mvc
-Imports Ercs
+Imports erc2.ViewModel
+Imports System.Dynamic
+
+
 
 Namespace Controllers
-    Public Class ERCsController
-        Inherits System.Web.Mvc.Controller
-        Private db As New VestaTestEntities
+    Public Class ERCController
+        Inherits Controller
         Dim con As SqlConnection = New SqlConnection("Data Source=DSE-MAIN1A;Initial Catalog=VestaTest;Persist Security Info=True;User ID=Tobil;Password=123asd!;MultipleActiveResultSets=True;Application Name=EntityFramework")
         Dim com As SqlCommand = New SqlCommand
-        Dim consumers As List(Of vwConsumer) = New List(Of vwConsumer)()
         Dim consumers3 As List(Of ERC) = New List(Of ERC)()
-
-        Dim consumers1 As List(Of NewClass) = New List(Of NewClass)()
+        Dim consumers1 As List(Of vwConsumer) = New List(Of vwConsumer)()
+        Dim consumers As List(Of NewClass) = New List(Of NewClass)()
         Dim reader As SqlDataReader
 
-
-
-        ' GET: ERCs
-        Public Function Index(ByVal search As String, ByVal id As Integer?) As ActionResult
-            Dim emp = From x In db.ERC Select x
-
-            If Not String.IsNullOrEmpty(search) Then
-                emp = emp.Where(Function(x) x.Name.Contains(search) OrElse x.Code.Contains(search) OrElse x.BIN.Contains(search))
-            End If
-         Return View(emp.ToList())
-        End Function
-
-
-        Function KSK(ByVal id? As Integer) As ActionResult
+        ' GET: ERC
+        Function Index(ByVal id? As Integer) As ActionResult
+            Dim mymodel As ViewModel = New ViewModel()
+            mymodel.ERC = consumers3
+            mymodel.vwConsumer = consumers1
+            mymodel.NewClass = consumers
+            FetchData()
+            Return View(mymodel)
             If id < 1000 Then
-                FetchData1(id)
-                Return PartialView("KSK2", consumers1)
+                FetchData2(id)
+                Return View(consumers1)
             Else
-                FetchData(id)
-                Return PartialView("KSK", consumers)
-            End If
-        End Function
-
-        
-
-        Function KSK2(ByVal id? As Integer) As ActionResult
-            If id < 1000 Then
                 FetchData1(id)
+                Return View(consumers)
             End If
-            Return PartialView(consumers1)
+
+
+
         End Function
 
 
-        Private Sub FetchData(ByVal id? As Integer)
+
+        Private Sub FetchData()
+
+
+            Try
+                con.Open()
+                com.Connection = con
+                com.CommandText = "select * from ERC"
+                reader = com.ExecuteReader()
+
+
+
+                While reader.Read()
+
+                    consumers3.Add(New ERC() With {
+                        .Name = reader("Name").ToString(),
+                        .Code = reader("Code").ToString()
+                        })
+                End While
+
+
+            Catch ex As Exception
+                con.Close()
+                Throw ex
+            End Try
+        End Sub
+
+        Private Sub FetchData1(ByVal id? As Integer)
+
             Dim Code As String
             Code = CStr(id)
 
-            If (consumers.Count > 0) Then
-                consumers.Clear()
+            If (consumers1.Count > 0) Then
+                consumers1.Clear()
             End If
             Try
                 con.Open()
@@ -90,11 +99,11 @@ order by 1,2"
 
                 While reader.Read()
 
-                    consumers.Add(New vwConsumer() With {
-                        .CountLS = reader("CountLS").ToString(),
-                        .FullHouse = reader("FullHouse").ToString(),
-                        .NameStreet = reader("NameStreet").ToString(),
+                    consumers1.Add(New vwConsumer() With {
                         .Value = reader("Value").ToString(),
+                         .CountLS = reader("CountLS").ToString(),
+                          .NameStreet = reader("NameStreet").ToString(),
+                           .FullHouse = reader("FullHouse").ToString(),
                         .ValueTariff = reader("ValueTariff").ToString()
                                   })
                 End While
@@ -107,12 +116,13 @@ order by 1,2"
         End Sub
 
 
-        Private Sub FetchData1(ByVal id? As Integer)
+        Private Sub FetchData2(ByVal id? As Integer)
+
             Dim Code As String
             Code = CStr(id)
 
-            If (consumers1.Count > 0) Then
-                consumers1.Clear()
+            If (consumers.Count > 0) Then
+                consumers.Clear()
             End If
             Try
                 con.Open()
@@ -132,9 +142,10 @@ order by c.NameStreet, A.Name"
 
                 While reader.Read()
 
-                    consumers1.Add(New NewClass() With {
+                    consumers.Add(New NewClass() With {
                 .NameStreet = reader("NameStreet").ToString(),
-                .Name = reader("Name").ToString()})
+                .Name = reader("Name").ToString()
+                 })
                 End While
 
 
@@ -147,70 +158,6 @@ order by c.NameStreet, A.Name"
 
         End Sub
 
-        ' GET: ERCs/Details/5
-        Function Details(ByVal id As Integer?) As ActionResult
-            If IsNothing(id) Then
-                Return New HttpStatusCodeResult(HttpStatusCode.BadRequest)
-            End If
-            Dim eRC As ERC = db.ERC.Find(id)
-            If IsNothing(eRC) Then
-                Return HttpNotFound()
-            End If
-            Return PartialView(eRC)
-        End Function
-
-        ' GET: ERCs/Create
-        Function Create() As ActionResult
-            Return View()
-        End Function
-
-        ' POST: ERCs/Create
-        'Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
-        'сведения см. в статье http://go.microsoft.com/fwlink/?LinkId=317598.
-        <HttpPost()>
-        <ValidateAntiForgeryToken()>
-        Function Create(<Bind(Include:="IDAccounting,Name,BIN,ValueTariff,Code,NumberContract,DateContract,NamePrint")> ByVal eRC As ERC) As ActionResult
-            If ModelState.IsValid Then
-                db.ERC.Add(eRC)
-                db.SaveChanges()
-                Return RedirectToAction("Index")
-            End If
-            Return View(eRC)
-        End Function
-
-        ' GET: ERCs/Edit/5
-        Function Edit(ByVal id As Integer?) As ActionResult
-            If IsNothing(id) Then
-                Return New HttpStatusCodeResult(HttpStatusCode.BadRequest)
-            End If
-            Dim eRC As ERC = db.ERC.Find(id)
-            If IsNothing(eRC) Then
-                Return HttpNotFound()
-            End If
-            Return View(eRC)
-        End Function
-
-        ' POST: ERCs/Edit/5
-        'Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
-        'сведения см. в статье http://go.microsoft.com/fwlink/?LinkId=317598.
-        <HttpPost()>
-        <ValidateAntiForgeryToken()>
-        Function Edit(<Bind(Include:="NumberContract,DateContract,NamePrint")> ByVal eRC As ERC) As ActionResult
-            If ModelState.IsValid Then
-                db.Entry(eRC).State = EntityState.Modified
-                db.SaveChanges()
-                Return RedirectToAction("Index")
-            End If
-            Return View(eRC)
-        End Function
-
-
-
-        Protected Overrides Sub Dispose(ByVal disposing As Boolean)
-            If (disposing) Then
-                db.Dispose()
-            End If
-            MyBase.Dispose(disposing)
-        End Sub
     End Class
 End Namespace
+
