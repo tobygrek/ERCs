@@ -1,10 +1,11 @@
-@ModelType IEnumerable(Of Ercs.ERC)
+@ModelType ViewModel
 @Code
-    ViewData("Title") = "Администратор"
-    Layout = "~/Views/Shared/_Layout.vbhtml"
+    ViewData("Title") = "Index"
+
 End Code
 
 <p><h2>ERC</h2></p>
+
 
 <form asp-controller="ERCs" asp-action="Index">
     <p>
@@ -14,17 +15,69 @@ End Code
     </p>
 
 </form>
-<div style ="height :600px; width :200px;overflow :auto ; color:black;">
+
+
+<div style="height :600px; width :200px;overflow :auto ; color:black;">
     <ul class="nav flex-column">
-        @For Each item In Model
+        @For Each item In Model.ERC
             @<li class="nav-item">
-                <h5 style="color:black;">@Html.ActionLink(item.Name, "KSK", New With {Key .id = item.Code})</h5>
+                <h5 style="color:black;">@Html.ActionLink(item.Name, "Index", New With {Key .id = item.Code})</h5>
             </li>
         Next
 
     </ul>
-    </div>
-<div>
-    @Html.Partial("KSK", New List(Of vwConsumer))
-    @Html.Partial("KSK2", New List(Of NewClass))
+</div>
+
+
+
+
+
+<div Class="table" style=" height :400px; width :600px;overflow :auto ; margin:auto ; ">
+    <h2> Информация по КСК</h2>
+    <Table class="table table-bordered table-hover ">
+        <tr>
+            <th>Улица</th>
+            <th>Счёт</th>
+            <th>Дом</th>
+            <th>Параметр</th>
+            <th>Тариф</th>
+        </tr>
+        @If Model IsNot Nothing Then
+            @For Each vwConsumer In Model.vwConsumer
+                @<tr>
+                    <td>@vwConsumer.NameStreet </td>
+                    <td>@vwConsumer.CountLS </td>
+                    <td>@vwConsumer.FullHouse </td>
+                    <td>@vwConsumer.Value </td>
+                    <td>@vwConsumer.ValueTariff </td>
+                </tr>
+            Next
+        End If
+    </Table>
+
+
+</div>
+
+
+
+<div Class="table" style=" height :400px; width :600px;overflow :auto ; margin:auto ; ">
+
+    <h2> Информация по КСК</h2>
+    <Table class="table table-bordered table-hover ">
+        <tr>
+            <th>Название</th>
+            <th>Улица</th>
+        </tr>
+        @If Model IsNot Nothing Then
+            @For Each NewClass In Model.NewClass
+                @<tr>
+                    <td>@NewClass.Name </td>
+
+                    <td>@NewClass.NameStreet   </td>
+                </tr>
+            Next
+        End If
+    </Table>
+
+
 </div>
